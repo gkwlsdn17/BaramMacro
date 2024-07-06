@@ -6,6 +6,7 @@ import time
 import os
 from datetime import datetime
 from threading import Thread
+import traceback
 class Popup(QDialog):
     signal = Signal(str)
 
@@ -111,6 +112,7 @@ class Popup(QDialog):
 
         try:
             self.term = int(self.tb_time_set.toPlainText())
+            self.save_term = self.term # 에러가 났을때 해당 값부터 다시 대기하기 위한 값
         except:
             self.msgbox = QMessageBox(self)
             self.msgbox.setText("대기시간을 올바르게 설정하세요")
@@ -156,46 +158,96 @@ class Popup(QDialog):
         self.work()
 
     def work(self):
-        # 자동사냥 버튼
-        pyautogui.click(568, 772)
-        pyautogui.click(568, 772)
+        self.point = "S1"
+        self.error_count = 0
+        while True:
+            try:
+                if self.point == "S1":
+                    # 자동사냥 버튼
+                    pyautogui.click(568, 772)
+                    pyautogui.click(568, 772)
+                    self.point = "S2"
 
-        time.sleep(1)
-        # 사망시 자동부활 버튼
-        pyautogui.click(413, 486)
-        
-        # 시작 버튼
-        time.sleep(1)
-        pyautogui.click(410, 530)
+                if self.point == "S2":
+                    time.sleep(1)
+                    # 사망시 자동부활 버튼
+                    pyautogui.click(413, 486)
+                    self.point = "S3"
+                
+                if self.point == "S3":
+                    # 시작 버튼
+                    time.sleep(1)
+                    pyautogui.click(410, 530)
+                    self.point = "S4"
 
-        time.sleep(1)
-        # 확인 버튼
-        pyautogui.click(345, 507)
+                if self.point == "S4":
+                    time.sleep(1)
+                    # 확인 버튼
+                    pyautogui.click(345, 507)
+                    self.point = "S5"
 
-        # 대기시간만큼 기다림
-        time.sleep(self.term)
+                if self.point == "S5":
+                    # 대기시간만큼 기다림
+                    while self.save_term > 0:
+                        time.sleep(1)
+                        self.save_term -= 1
+                    self.save_term = self.term # 아래에서 다시 사용하기 위해 값 복구
+                    self.point = "S6"
 
-        # 2번째 창 자동사냥 버튼
-        pyautogui.click(1460, 772)
-        pyautogui.click(1460, 772)
+                if self.point == "S6":
+                    # 2번째 창 자동사냥 버튼
+                    pyautogui.click(1460, 772)
+                    pyautogui.click(1460, 772)
+                    self.point = "S7"
 
-        time.sleep(1)
-        # 사망시 자동부활 버튼
-        pyautogui.click(1279, 486)
+                if self.point == "S7":
+                    time.sleep(1)
+                    # 사망시 자동부활 버튼
+                    pyautogui.click(1279, 486)
+                    self.point = "S8"
 
-        # 시작 버튼
-        time.sleep(1)
-        pyautogui.click(1303, 530)
 
-        # 확인 버튼
-        time.sleep(1)
-        pyautogui.click(1246, 507)
+                if self.point == "S8":
+                    # 시작 버튼
+                    time.sleep(1)
+                    pyautogui.click(1303, 530)
+                    self.point = "S9"
 
-        # 대기시간만큼 기다림
-        time.sleep(self.term)
+                if self.point == "S9":
+                    # 확인 버튼
+                    time.sleep(1)
+                    pyautogui.click(1246, 507)
+                    self.point = "S10"
 
-        if self.check_poweroff.isChecked():
-            # 컴퓨터 종료
-            os.system("shutdown /s /t 1")
-        else:
-            self.signal.emit("WorkEnd")
+                if self.point == "S10":
+                    # 대기시간만큼 기다림
+                    while self.save_term > 0:
+                        time.sleep(1)
+                        self.save_term -= 1
+
+                if self.check_poweroff.isChecked():
+                    # 컴퓨터 종료
+                    os.system("shutdown /s /t 1")
+                    break
+                else:
+                    self.signal.emit("WorkEnd")
+                    break
+
+            except Exception as e:
+                print("-----------------------------------------")
+                print(f"work ERROR!!: \n {traceback.print_exc()}")
+                print("-----------------------------------------")
+                self.error_count += 1
+                if self.error_count > 1:
+                    print(f"error count > 1, work end")
+                    if self.check_poweroff.isChecked() == False:
+                        self.signal.emit("WorkEnd")
+                    break
+                else:
+                    time.sleep(1)
+                    pyautogui.click(10, 10)
+                    print(f"error count 1, work restart: point={self.point}")
+                    if self.point == "S10" or self.point == "S5":
+                        print(f"save_term = {self.save_term}")
+                    continue
+
