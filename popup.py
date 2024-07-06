@@ -24,6 +24,9 @@ class Popup(QDialog):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+        # FAILSAVE 안쓰기로 함
+        pyautogui.FAILSAFE = False 
+
     def closeEvent(self, event):
         # Close the entire application when the dialog is closed
         QApplication.instance().quit()
