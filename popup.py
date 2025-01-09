@@ -46,12 +46,16 @@ class Popup(QDialog):
         self.tb_time_set.setGeometry(10, 40, 280, 30)
         # self.layout.addWidget(self.lb_time_set)
         # self.layout.addWidget(self.tb_time_set)
-        
+
+        self.check_event = QCheckBox(self)
+        self.check_event.setText("출석창유무")
+        self.check_event.setChecked(False)
+        self.check_event.setGeometry(170, 70, 100, 30)
 
         self.check_poweroff = QCheckBox(self)
         self.check_poweroff.setText("사용 후 PC 종료")
         self.check_poweroff.setChecked(True)
-        self.check_poweroff.setGeometry(10, 70, 280, 30)
+        self.check_poweroff.setGeometry(10, 70, 150, 30)
         # self.layout.addWidget(self.check_poweroff)
 
         self.check_reservation = QCheckBox(self)
@@ -165,6 +169,18 @@ class Popup(QDialog):
         self.error_count = 0
         while True:
             try:
+                if self.check_event:
+                    self.point = "Ev1"
+                
+                if self.point == "Ev1":
+                    pyautogui.click(800, 80)
+                    pyautogui.click(800, 80)
+                    time.sleep(1)
+                    pyautogui.click(1696, 83)
+                    pyautogui.click(1696, 83)
+                    time.sleep(1)
+                    self.point = "S1"
+
                 if self.point == "S1":
                     # 자동사냥 버튼
                     pyautogui.click(568, 772)
@@ -195,6 +211,16 @@ class Popup(QDialog):
                         time.sleep(1)
                         self.save_term -= 1
                     self.save_term = self.term # 아래에서 다시 사용하기 위해 값 복구
+                    self.point = "E1"
+                
+                if self.point == "E1":
+                    # 자동사냥 버튼
+                    pyautogui.click(568, 772)
+                    pyautogui.click(568, 772)
+                    time.sleep(1)
+                    # 자동사냥 중지 네 버튼
+                    pyautogui.click(360, 470)
+                    time.sleep(1)
                     self.point = "S6"
 
                 if self.point == "S6":
@@ -227,6 +253,16 @@ class Popup(QDialog):
                     while self.save_term > 0:
                         time.sleep(1)
                         self.save_term -= 1
+                    self.point = "E2"
+                
+                if self.point == "E2":
+                    # 2번째 창 자동사냥 버튼
+                    pyautogui.click(1460, 772)
+                    pyautogui.click(1460, 772)
+                    time.sleep(1)
+                    # 2번째 창 자동사냥 종료 네 버튼
+                    pyautogui.click(1264, 466)
+                    time.sleep(1)
 
                 if self.check_poweroff.isChecked():
                     # 컴퓨터 종료
