@@ -47,10 +47,10 @@ class Popup(QDialog):
         # self.layout.addWidget(self.lb_time_set)
         # self.layout.addWidget(self.tb_time_set)
 
-        self.check_event = QCheckBox(self)
-        self.check_event.setText("출석창유무")
-        self.check_event.setChecked(False)
-        self.check_event.setGeometry(170, 70, 100, 30)
+        # self.check_event = QCheckBox(self)
+        # self.check_event.setText("출석창유무")
+        # self.check_event.setChecked(False)
+        # self.check_event.setGeometry(170, 70, 100, 30)
 
         self.check_poweroff = QCheckBox(self)
         self.check_poweroff.setText("사용 후 PC 종료")
@@ -169,17 +169,19 @@ class Popup(QDialog):
         self.error_count = 0
         while True:
             try:
-                if self.check_event:
-                    self.point = "Ev1"
+                # if self.check_event:
+                #     self.point = "Ev1"
                 
-                if self.point == "Ev1":
-                    pyautogui.click(800, 80)
-                    pyautogui.click(800, 80)
-                    time.sleep(1)
-                    pyautogui.click(1696, 83)
-                    pyautogui.click(1696, 83)
-                    time.sleep(1)
-                    self.point = "S1"
+                # if self.point == "Ev1":
+
+                # 출석창 있을경우 닫음
+                pyautogui.click(800, 80)
+                pyautogui.click(800, 80)
+                time.sleep(1)
+                pyautogui.click(1696, 83)
+                pyautogui.click(1696, 83)
+                time.sleep(1)
+                    # self.point = "S1"
 
                 if self.point == "S1":
                     # 자동사냥 버튼
